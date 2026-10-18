@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-10-18 - garage: Garage v2.4.1 S3 object storage (portable_cluster experiment)
+
+### Added
+
+- `argocd/garage.yaml` + `garage/values.yaml` — upstream chart pinned to
+  v2.4.1, 3-replica StatefulSet on `local-path` PVCs (meta 1Gi, data 20Gi),
+  3x replication, Kubernetes-native peer discovery. rpcSecret auto-generated
+  by the chart (helm-lookup-stable, nothing secret in this repo). First slice
+  of the portable_cluster app-layer-sharded blueprint
+  (infra/portable_cluster/README.md).
+
 ## 2026-10-18 - storage: local-path vs NFS benchmark
 
 ### Added
