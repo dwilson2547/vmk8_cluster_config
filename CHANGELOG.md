@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-10-18 - traefik: unblock first sync
+
+### Fixed
+
+- The traefik Application's first automated sync failed with
+  `namespaces "ingress" not found` — the namespace does not pre-exist on a fresh
+  cluster (it does on prod, which is why the mirrored manifest had no
+  CreateNamespace). Added `CreateNamespace=true` to `argocd/traefik.yaml` and
+  created the namespace by hand to clear the in-flight retry.
+
 ## 2026-10-18 - initial scaffold: app-of-apps, MetalLB, Traefik
 
 ### Added
