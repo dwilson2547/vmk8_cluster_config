@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-10-18 - storage: local-path provisioner (hot local tier)
+
+### Added
+
+- `argocd/local-path.yaml` — rancher/local-path-provisioner v0.0.37, opt-in
+  `local-path` StorageClass (not default) provisioning bind-mount PVs under
+  `/opt/local-path-provisioner` per node. Zero per-volume daemons: the
+  anti-Longhorn — replication stays in the app layer, local disk for hot data.
+
 ## 2026-10-18 - docs: NFS teardown-wedge issue record
 
 ### Added
