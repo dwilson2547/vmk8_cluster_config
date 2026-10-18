@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: git@github.com:dwilson2547/vmk8_cluster_config.git
+    repoURL: https://github.com/dwilson2547/vmk8_cluster_config.git
     targetRevision: main
     path: metallb
   destination:
