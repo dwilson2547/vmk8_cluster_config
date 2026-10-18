@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-10-18 - garage: experiment verified (layout, S3 round trip, node kill)
+
+### Added
+
+- `docs/garage-experiment-notes.md` — full run record: 3-node layout (256
+  partitions, 3x replication), S3 write/read via aws-cli, node-kill test
+  (object readable during outage, pod recreated on the same node with its
+  local-path PVC), plus the gotchas hit (owner ≠ read/write in bucket allow,
+  from-scratch image exec path, aws-cli entrypoint, Argo cosmetic OutOfSync).
+
 ## 2026-10-18 - garage: Garage v2.4.1 S3 object storage (portable_cluster experiment)
 
 ### Added
