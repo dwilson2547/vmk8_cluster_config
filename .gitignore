@@ -1,0 +1,9 @@
+# Secrets are applied by hand, never committed.
+secret*.yml
+secret*.yaml
+secrets/
+
+# Kubeconfigs never belong in a config repo.
+*.conf
+config
+kubeconfig*
