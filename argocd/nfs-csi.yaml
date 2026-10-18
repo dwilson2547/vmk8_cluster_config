@@ -11,7 +11,9 @@ spec:
   source:
     repoURL: https://github.com/kubernetes-csi/csi-driver-nfs.git
     targetRevision: v4.13.2
-    path: charts/csi-driver-nfs
+    # At tag v4.13.2 the chart lives under charts/latest/ (the repo's layout,
+    # not charts/csi-driver-nfs).
+    path: charts/latest/csi-driver-nfs
   destination:
     server: https://kubernetes.default.svc
     namespace: kube-system
