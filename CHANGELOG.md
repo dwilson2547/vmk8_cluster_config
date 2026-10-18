@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-10-18 - storage: NFS CSI driver + nfs-dataset StorageClass
+
+### Added
+
+- `argocd/nfs-csi.yaml` — upstream csi-driver-nfs chart pinned to v4.13.2,
+  matching the prod cluster's driver version.
+- `argocd/nfs-dataset.yaml` + `storage/nfs-dataset.yaml` — `nfs-dataset`
+  StorageClass mirroring prod exactly: TrueNAS 192.168.0.10,
+  `/mnt/ssd_pool/nfs_dataset`, hard NFSv4.1, Delete reclaim. Both clusters
+  provision into the same share as distinct subdirectories.
+
 ## 2026-10-18 - dns: migrate dashboard host to home.arpa; pin pod DNS upstream
 
 ### Changed
