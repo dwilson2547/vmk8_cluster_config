@@ -61,6 +61,22 @@ kubectl -n kube-system edit cm coredns   # forward . /etc/resolv.conf → forwar
 kubectl -n kube-system rollout restart deploy/coredns
 ```
 
+## Storage
+
+`nfs-dataset` StorageClass mirrors prod exactly: CSI NFS driver v4.13.2
+(`argocd/nfs-csi.yaml`, upstream chart) against the TrueNAS at 192.168.0.10,
+share `/mnt/ssd_pool/nfs_dataset`, hard NFSv4.1. Both clusters provision into
+the same share as distinct subdirectories, so dev data sits alongside prod
+data on the NAS. Verified with a PVC + pod write smoke test (2026-10-18).
+
+## Kubeconfig (workstation)
+
+`~/.kube/config` carries both clusters: contexts `microk8s` (prod) and `vmk8`.
+Swap with `kubectl config use-context vmk8` / `microk8s`. The pristine vmk8
+kubeconfig from `microk8s config` lives at `~/vmk8cluster/config` (its entries
+are renamed `vmk8`/`vmk8-cluster`/`vmk8-admin` when merged, to avoid colliding
+with prod's identical MicroK8s names).
+
 ## Bootstrap
 
 ArgoCD itself is installed by hand once (upstream install manifest, namespace `argocd`), then:
