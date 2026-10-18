@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-10-18 - docs: NFS teardown-wedge issue record
+
+### Added
+
+- `docs/issues/2026_10_18_nfs_teardown_stuck_after_sigkill.md` — SIGKILL'd pod
+  left the kubelet CSI mount dir populated, wedging pod/PVC/PV deletion
+  (`directory not empty` retry loop). Remediation: empty the mount dir as root,
+  kubelet's retry completes the teardown. Applies to prod too (same driver
+  and StorageClass).
+
 ## 2026-10-18 - storage: NFS CSI driver + nfs-dataset StorageClass
 
 ### Added
