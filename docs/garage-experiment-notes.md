@@ -18,10 +18,48 @@ upstream git repo, ArgoCD-managed as the `garage` app).
   against `http://garage:3900` (`s3 cp` up, `s3api get-object` down).
 - **Node-kill test**: `kubectl delete pod garage-1`; object read succeeded
   ~3s later during the outage (READ-DURING-OUTAGE-OK) — the surviving replicas
-  served it, the ClusterIP service endpoints excluded the dead pod.
+  served it, the ClusterIP service endpoints excluded the dead pod. **However,
+  the killed pod then failed to rejoin the cluster** — see the incident below;
+  the original "experiment verified" claim overstated it. The durability claim
+  held; the self-healing claim did not, until the secret fix.
 - **Local PV semantics**: garage-1's StatefulSet recreation landed on the same
   node (vmk8snode2) with its data PVC intact — WaitForFirstConsumer pinning
   behaves as the blueprint intends.
+
+## Incident: rpcSecret churn under ArgoCD partitioned restarted pods
+
+**Symptom:** all pods Running/Ready, but garage-1 (after any restart) was a
+full network partition: peers rejected its RPC handshake
+("failed verifing client hello"), it saw peers "never seen", and peers kept
+dialing its dead pod IP ("timed out"). Sync errors streamed continuously.
+
+**Root cause:** the chart generates the rpcSecret with helm `lookup` (reuse
+live value) + `randHex` fallback. Under ArgoCD this is **not render-stable**:
+one render happened without the live value (repo-server renders without full
+cluster access), generated a NEW random secret, and Argo applied it in place
+(creationTimestamp unchanged, later renders matched — Secret showed "Synced").
+Pods initialized before the churn held the old secret; every restarted pod
+re-ran the init-container sed with the new value. Handshake failures both
+directions are exactly the "different rpc_secret" case.
+
+**Diagnosis:** the discriminating experiment — restart a healthy never-restarted
+peer (garage-2): fresh-init pods connected to each other immediately, only the
+original pod stayed partitioned. Fresh pods disagree only with old pods ⇒ the
+shared secret changed between init generations.
+
+**Fix:** restart the last original pod (garage-0) so all three re-init on the
+current value; cluster healed (0 errors, S3 read verified).
+
+**Prevention (permanent):** `garage.existingRpcSecret: garage-rpc-secret` in
+values — the chart stops rendering the Secret entirely; the live Secret
+(created once by hand, never in this public repo) carries
+`argocd.argoproj.io/sync-options=Prune=false`. The name resolves to the same
+helper output either way, so the switch rolls no pods.
+
+**General lesson (applies to any chart):** helm `lookup` + random fallback is
+unsafe under GitOps — any render without the live value silently regenerates
+credentials. For anything security- or identity-bearing, reference a
+pre-existing secret by name instead of generating one in the chart.
 
 ## Gotchas hit (for future sessions)
 
@@ -39,7 +77,8 @@ upstream git repo, ArgoCD-managed as the `garage` app).
   HEAD; `s3api get-object` works fine.
 - **Argo shows the garage app perpetually OutOfSync on the StatefulSet**
   (render diff, cosmetic; automated syncs succeed, workloads healthy). Likely
-  the chart's helm-lookup rendering. Revisit if it ever blocks a real sync.
+  the same class of render instability as the secret incident above. Revisit
+  if it ever blocks a real sync.
 
 ## Lab key
 

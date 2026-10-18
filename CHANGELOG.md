@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-10-18 - garage: rpcSecret churn incident — root cause, fix, prevention
+
+### Fixed
+
+- Restarted garage pods were permanently partitioned from the cluster (RPC
+  handshake rejected both directions): an ArgoCD render of the chart without
+  the live `lookup` value regenerated the rpcSecret in place, so pods that
+  initialized before the churn held a different secret than restarted pods.
+  Healed by rolling the last original pod; permanently prevented by switching
+  to `garage.existingRpcSecret` (chart no longer renders the Secret; the live
+  Secret is Prune=false protected). Full record:
+  docs/garage-experiment-notes.md.
+
 ## 2026-10-18 - garage: experiment verified (layout, S3 round trip, node kill)
 
 ### Added
