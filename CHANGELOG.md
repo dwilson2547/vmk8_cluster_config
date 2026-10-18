@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-10-18 - dns: migrate dashboard host to home.arpa; pin pod DNS upstream
+
+### Changed
+
+- `traefik/values.yaml`: dashboard host `traefik.vmk8.local` → `traefik.vmk8.home.arpa`
+  (`.local` is RFC 6762-reserved for mDNS and unusable from systemd-resolved hosts;
+  prod CoreDNS now serves a consolidated `home.arpa` zone with `*.vmk8` → 192.168.0.95).
+
+### Fixed
+
+- Pod DNS for `home.arpa` names was nondeterministic (NXDOMAIN ~half the time):
+  the node resolv.conf lists the router as a secondary resolver, and in-cluster
+  CoreDNS's default random forward policy sent roughly half of pod queries to the
+  router, which does not know the zone. Pinned `forward . 192.168.0.61` in the
+  kube-system coredns ConfigMap (documented manual patch, see README — the
+  configmap belongs to the microk8s dns addon, so it is not ArgoCD-managed).
+  Verified 3/3 pod lookups after the rollout.
+
 ## 2026-10-18 - traefik: unblock first sync
 
 ### Fixed

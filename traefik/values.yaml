@@ -17,7 +17,7 @@ ingressRoute:
     enabled: true
     entryPoints:
       - web
-    matchRule: Host(`traefik.vmk8.local`)
+    matchRule: Host(`traefik.vmk8.home.arpa`)
 ports:
   web:
     exposedPort: 80

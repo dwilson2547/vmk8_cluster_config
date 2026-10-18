@@ -37,11 +37,29 @@ Never let the two pools overlap: both announce via L2/ARP on the same LAN.
 
 ## DNS
 
-The vmk8 hosts resolve through prod CoreDNS at 192.168.0.61 first (it serves every `.local`
-zone and forwards unknown names to 8.8.8.8/1.1.1.1). MicroK8s in-cluster CoreDNS forwards to
-`/etc/resolv.conf`, so pods inherit that chain automatically — no in-cluster DNS config needed.
-Dev zones that should point at vmk8 ingress get their A records repointed to 192.168.0.95 in
-`infra/cluster-config/dns/dns.yaml` (prod repo stays the single DNS authority).
+The LAN is migrating off the RFC 6762-reserved `.local` TLD to `home.arpa`
+(RFC 8375): prod CoreDNS at 192.168.0.61 serves a consolidated `home.arpa`
+zone, with this cluster's ingress at `*.vmk8.home.arpa` → 192.168.0.95. The
+`.local` zones are dual-served until all references are migrated.
+
+Resolution chain for this cluster:
+
+- Hosts: systemd-resolved → 192.168.0.61 first (zone authority + upstream
+  forward to 8.8.8.8/1.1.1.1). `home.arpa` names resolve natively — no
+  systemd-resolved special-casing, unlike `.local`.
+- Pods: in-cluster CoreDNS is pinned with `forward . 192.168.0.61`
+  (hand-applied patch, see below). It must NOT use `forward . /etc/resolv.conf`:
+  the node's resolv.conf lists the router (192.168.0.1) too, and CoreDNS's
+  default random upstream policy would send ~half of pod queries to the router,
+  which NXDOMAINs every `home.arpa` name.
+
+The coredns patch is a documented manual step (the kube-system CoreDNS belongs
+to the microk8s dns addon; it is not ArgoCD-managed):
+
+```bash
+kubectl -n kube-system edit cm coredns   # forward . /etc/resolv.conf → forward . 192.168.0.61
+kubectl -n kube-system rollout restart deploy/coredns
+```
 
 ## Bootstrap
 
