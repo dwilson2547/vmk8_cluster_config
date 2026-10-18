@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-10-18 - storage: local-path vs NFS benchmark
+
+### Added
+
+- `docs/storage-tier-benchmark.md` — measured local-path (ZFS/SATA vDisk) vs
+  nfs-dataset (TrueNAS SSD pool): reads identical (host ARC), NFS ~4.7x faster
+  on direct 4k random writes (ZFS sync/ZIL path dominates). Conclusion: the hot
+  local tier pays off on dedicated NVMe nodes, not on the current hypervisor
+  stack.
+
 ## 2026-10-18 - storage: local-path provisioner (hot local tier)
 
 ### Added
