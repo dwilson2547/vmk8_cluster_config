@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-10-19 - garage: admin API bearer token (webui auth fix)
+
+### Fixed
+
+- The webui showed 0 nodes and auth errors on bucket operations. Two stacked
+  causes: (1) the first image (khairul169:1.1.0) queries the removed v1 admin
+  API — swapped to ghcr.io/davidschoefberger/garage-webui:2.5.2; (2) Garage
+  v2's admin API REQUIRES a bearer token (403 otherwise) and none was
+  configured — the in-pod CLI masks this because it authenticates via RPC with
+  the rpc secret, not HTTP. Added hand-applied Secret `garage-admin-token`
+  (never in this repo), injected as `GARAGE_ADMIN_TOKEN` into the daemon via
+  the chart's `environment` passthrough and as `API_ADMIN_KEY` into the webui.
+  Verified: GET /v2/GetClusterStatus with the token returns the live node
+  list; the webui's /api/buckets lists lab-bucket.
+
 ## 2026-10-18 - garage-webui: admin UI for Garage
 
 ### Added

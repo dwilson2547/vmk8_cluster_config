@@ -63,6 +63,19 @@ pre-existing secret by name instead of generating one in the chart.
 
 ## Gotchas hit (for future sessions)
 
+- **Garage v2's admin API requires a bearer token** (`403 Bearer token must be
+  provided`), and the v2 endpoint shape is `GET /v2/<CamelCaseMethod>` (e.g.
+  `/v2/GetClusterStatus`) — `/v0/` and `/v1/` both 400 with "no longer
+  supported". The in-pod `garage` CLI masks all of this because it
+  authenticates over RPC with the rpc secret, not over HTTP. Token is the
+  hand-applied `garage-admin-token` Secret, injected via `GARAGE_ADMIN_TOKEN`
+  (daemon) and `API_ADMIN_KEY` (webui); `GET /v2/GetCurrentAdminTokenInfo`
+  shows the daemon-config token carries scope `*`.
+- **garage-webui versions**: khairul169/garage-webui:1.1.0 speaks the removed
+  v1 admin API (0 nodes, auth errors against Garage v2). Use
+  ghcr.io/davidschoefberger/garage-webui:2.5.2 (the v2 fork); its backend API
+  is mounted under `/api/` (e.g. `/api/buckets`), and it injects the admin key
+  server-side.
 - **`bucket allow --owner` does not grant read/write.** Garage permissions are
   separate: owner manages the bucket, but data access needs an explicit
   `garage bucket allow <bucket> --key <key> --read --write`. First put failed
