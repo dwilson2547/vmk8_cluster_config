@@ -10,6 +10,10 @@ spec:
     repoURL: https://github.com/dwilson2547/vmk8_cluster_config.git
     targetRevision: main
     path: kafka
+    # Without recurse, directory apps do NOT include subdirectories
+    # (kafka/topics/ stayed invisible until this was set).
+    directory:
+      recurse: true
   destination:
     server: https://kubernetes.default.svc
     namespace: kafka
