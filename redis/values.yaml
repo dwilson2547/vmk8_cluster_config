@@ -4,6 +4,16 @@
 # Password pinned via hand-applied Secret (bitnami charts generate a random
 # password via helm lookup otherwise — the same churn risk as the Garage
 # rpcSecret incident; see docs/garage-experiment-notes.md).
+#
+# Image: bitnami moved free images to the frozen `bitnamilegacy` registry in
+# Aug 2025; the chart's default docker.io/bitnami/* tag 404s. The archived
+# image still receives no updates — acceptable for the disposable dev cluster;
+# a real deployment picks a maintained redis image/distribution.
+image:
+  registry: docker.io
+  repository: bitnamilegacy/redis-cluster
+  tag: 8.2.1-debian-12-r0
+
 cluster:
   nodes: 6
   replicas: 1
