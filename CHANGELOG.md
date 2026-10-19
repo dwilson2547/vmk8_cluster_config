@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-10-18 - garage-webui: admin UI for Garage
+
+### Added
+
+- `argocd/garage-webui.yaml` + `garage-webui/webui.yaml` —
+  khairul169/garage-webui:1.1.0 (community admin UI), pointing at the Garage
+  admin API via the headless service, exposed LAN-only at
+  http://garage.vmk8.home.arpa (covered by the existing `*.vmk8` record).
+  Security posture documented in the manifest: admin API is unauthenticated
+  in-cluster (no admin_token set by the chart); harden via token +
+  API_ADMIN_KEY_FILE + AUTH_USER_PASS if the dev posture stops being
+  acceptable.
+
 ## 2026-10-18 - garage: rpcSecret churn incident — root cause, fix, prevention
 
 ### Fixed
