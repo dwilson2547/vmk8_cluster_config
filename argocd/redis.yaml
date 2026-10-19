@@ -1,0 +1,30 @@
+# Redis Cluster — portable_cluster slice 4. Bitnami redis-cluster chart
+# pinned to tag redis-cluster/13.0.4 (Redis 8.x) from the upstream git repo.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: redis
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/bitnami/charts.git
+      targetRevision: redis-cluster/13.0.4
+      path: bitnami/redis-cluster
+      helm:
+        releaseName: redis
+        valueFiles:
+          - $values/redis/values.yaml
+    - repoURL: https://github.com/dwilson2547/vmk8_cluster_config.git
+      targetRevision: main
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: redis
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true
+      - CreateNamespace=true

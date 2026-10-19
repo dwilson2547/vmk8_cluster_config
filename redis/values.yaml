@@ -1,0 +1,27 @@
+# Redis Cluster values — portable_cluster slice 4. 6 nodes = 3 masters +
+# 3 replicas (one per master): kill a master and its replica is promoted —
+# the richest failover story of the four slices. Data on the local-path tier.
+# Password pinned via hand-applied Secret (bitnami charts generate a random
+# password via helm lookup otherwise — the same churn risk as the Garage
+# rpcSecret incident; see docs/garage-experiment-notes.md).
+cluster:
+  nodes: 6
+  replicas: 1
+
+usePassword: true
+existingSecret: redis-cluster-password
+existingSecretPasswordKey: redis-password
+
+global:
+  storageClass: local-path
+
+persistence:
+  enabled: true
+  size: 2Gi
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    memory: 512Mi

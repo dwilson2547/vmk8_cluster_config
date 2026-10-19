@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-10-19 - redis: Redis Cluster (bitnami chart 13.0.4), 3+3 on local-path
+
+### Added
+
+- `argocd/redis.yaml` + `redis/values.yaml` — bitnami redis-cluster chart
+  pinned to redis-cluster/13.0.4 (Redis 8.x): 6 nodes (3 masters + 3
+  replicas), 2Gi local-path PVs, password pinned via hand-applied
+  `redis-cluster-password` Secret (avoiding the bitnami lookup-generated
+  password — the rpcSecret churn lesson applied preemptively).
+  portable_cluster blueprint slice 4.
+
 ## 2026-10-19 - cockroachdb: experiment verified (range spread, writes under node kill)
 
 ### Added
