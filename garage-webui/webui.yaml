@@ -1,4 +1,7 @@
-# garage-webui — community admin UI for Garage (khairul169/garage-webui).
+# garage-webui — community admin UI for Garage.
+# ghcr.io/davidschoefberger/garage-webui: the fork rewritten for Garage v2's
+# admin API. (khairul169/garage-webui:1.1.0 speaks the removed v1 admin API —
+# every call 400s against Garage v2.4.1: "v1/ endpoint is no longer supported".)
 # Talks to the Garage admin API via the headless service (the chart exposes no
 # admin Service; the headless DNS resolves to every pod and 3903 is listening
 # on each — any node serves the full cluster view).
@@ -26,7 +29,7 @@ spec:
     spec:
       containers:
         - name: garage-webui
-          image: khairul169/garage-webui:1.1.0
+          image: ghcr.io/davidschoefberger/garage-webui:2.5.2
           env:
             - name: API_BASE_URL
               value: http://garage-headless.garage:3903
