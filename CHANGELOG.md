@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-10-19 - kafka: experiment verified (spread, round trip, broker kill)
+
+### Added
+
+- `docs/kafka-experiment-notes.md` — full run record: 6-partition topic
+  spread across all three brokers, 100-message produce/consume, broker kill
+  during production (min ISR 2 held, leaders failed over, 120/120 messages
+  intact). Gotchas: Strimzi 1.x v1-only Kafka CRD, mandatory KafkaNodePool
+  CRs, ArgoCD directory apps need `recurse: true` for subdirs.
+
 ## 2026-10-19 - kafka: Strimzi 1.3.0 operator + 3-node KRaft cluster
 
 ### Added
