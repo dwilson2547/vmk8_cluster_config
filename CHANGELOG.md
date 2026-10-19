@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-10-19 - redis: experiment verified (slots, spread, master failover)
+
+### Added
+
+- `docs/redis-experiment-notes.md` — full run record: 16384 slots across
+  3 shards + replicas, 100 keys sharded ~1/3 per master, master kill with
+  replica promotion and zero data loss. Gotchas: bitnamilegacy registry,
+  pod-0-as-cluster-creator, stale nodes.conf wedging re-bootstrap (reset
+  via scale-0 + PVC delete), updateJob helm hook disabled for Argo.
+
 ## 2026-10-19 - redis: Redis Cluster (bitnami chart 13.0.4), 3+3 on local-path
 
 ### Added
