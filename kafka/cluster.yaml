@@ -3,7 +3,7 @@
 # local-path hot tier. RF 3 / min.insync.replicas 2: kill one broker and
 # produce continues; kill two and it pauses until one recovers — the quorum
 # floor from infra/portable_cluster/README.md.
-apiVersion: kafka.strimzi.io/v1beta2
+apiVersion: kafka.strimzi.io/v1
 kind: Kafka
 metadata:
   name: lab
