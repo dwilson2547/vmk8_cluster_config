@@ -17,6 +17,18 @@ garage:
   # The live Secret carries argocd.argoproj.io/sync-options=Prune=false.
   existingRpcSecret: garage-rpc-secret
 
+# Garage v2's admin API REQUIRES a bearer token (403 without it); the CLI
+# bypasses HTTP via RPC, which is why exec worked while every HTTP client
+# was locked out. The token is a hand-applied Secret (garage-admin-token),
+# injected here via the daemon's GARAGE_ADMIN_TOKEN env (replaces
+# admin.admin_token per garage --help). Never in this public repo.
+environment:
+  - name: GARAGE_ADMIN_TOKEN
+    valueFrom:
+      secretKeyRef:
+        name: garage-admin-token
+        key: adminToken
+
 persistence:
   # Node-local storage on the hot tier (see docs/storage-tier-benchmark.md for
   # what that buys on this hardware). Sizes are advisory with local-path —

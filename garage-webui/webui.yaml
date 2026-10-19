@@ -33,6 +33,11 @@ spec:
           env:
             - name: API_BASE_URL
               value: http://garage-headless.garage:3903
+            - name: API_ADMIN_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: garage-admin-token
+                  key: adminToken
             - name: PORT
               value: "3909"
           ports:
