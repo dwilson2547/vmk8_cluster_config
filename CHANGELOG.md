@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-10-19 - cockroachdb: CRDB 25.4.4, 3 replicas on local-path
+
+### Added
+
+- `argocd/cockroachdb.yaml` + `cockroachdb/values.yaml` — CockroachDB chart
+  19.0.6 (CRDB 25.4.4) from the upstream git repo, 3-replica StatefulSet with
+  10Gi local-path PVs, insecure mode (dev cluster; the chart's TLS self-signer
+  is the real-deployment default). portable_cluster blueprint slice 3.
+
 ## 2026-10-19 - kafka: experiment verified (spread, round trip, broker kill)
 
 ### Added
