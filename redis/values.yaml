@@ -18,6 +18,13 @@ cluster:
   nodes: 6
   replicas: 1
 
+# The cluster-create/update Job is a helm hook by default (post-upgrade) —
+# under ArgoCD that defers it to PostSync, after health; but node readiness
+# requires the cluster to exist. Empty string disables the hook annotation so
+# Argo applies the Job as a regular resource (it polls/waits for the nodes).
+updateJob:
+  helmHook: ""
+
 usePassword: true
 existingSecret: redis-cluster-password
 existingSecretPasswordKey: redis-password
