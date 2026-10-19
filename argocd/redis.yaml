@@ -1,5 +1,7 @@
-# Redis Cluster — portable_cluster slice 4. Bitnami redis-cluster chart
-# pinned to tag redis-cluster/13.0.4 (Redis 8.x) from the upstream git repo.
+# Redis Cluster — portable_cluster slice 4 (maintained-infra revision).
+# Chart: OT-CONTAINER-KIT/redis-operator's charts/redis-cluster at v0.27.0,
+# which renders the RedisCluster CR the operator (argocd/redis-operator.yaml)
+# reconciles. Replaces the bitnami chart + bitnamilegacy image.
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -8,9 +10,9 @@ metadata:
 spec:
   project: default
   sources:
-    - repoURL: https://github.com/bitnami/charts.git
-      targetRevision: redis-cluster/13.0.4
-      path: bitnami/redis-cluster
+    - repoURL: https://github.com/OT-CONTAINER-KIT/redis-operator.git
+      targetRevision: v0.27.0
+      path: charts/redis-cluster
       helm:
         releaseName: redis
         valueFiles:

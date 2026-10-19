@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-10-19 - redis: replaced bitnami chart with redis-operator (maintained infra)
+
+### Changed
+
+- `redis/values.yaml` + `argocd/redis.yaml`: the bitnami redis-cluster chart
+  (running the frozen `bitnamilegacy` image, archived Aug 2025) is replaced by
+  the OT-CONTAINER-KIT redis-operator (v0.27.0, released 9 days ago) with
+  `quay.io/opstree/redis:v8.10.1` — an actively rebuilt image on the current
+  Redis line. Same shape (3 masters + 3 replicas), same hand-applied
+  password secret, same local-path storage. Archived images in a blueprint
+  are a landmine: no security patches ever, wrong default to copy.
+- `argocd/redis-operator.yaml`: the operator app.
+
 ## 2026-10-19 - redis: experiment verified (slots, spread, master failover)
 
 ### Added

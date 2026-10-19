@@ -1,44 +1,41 @@
-# Redis Cluster values — portable_cluster slice 4. 6 nodes = 3 masters +
-# 3 replicas (one per master): kill a master and its replica is promoted —
-# the richest failover story of the four slices. Data on the local-path tier.
-# Password pinned via hand-applied Secret (bitnami charts generate a random
-# password via helm lookup otherwise — the same churn risk as the Garage
-# rpcSecret incident; see docs/garage-experiment-notes.md).
-#
-# Image: bitnami moved free images to the frozen `bitnamilegacy` registry in
-# Aug 2025; the chart's default docker.io/bitnami/* tag 404s. The archived
-# image still receives no updates — acceptable for the disposable dev cluster;
-# a real deployment picks a maintained redis image/distribution.
-image:
-  registry: docker.io
-  repository: bitnamilegacy/redis-cluster
-  tag: 8.2.1-debian-12-r0
+# Redis Cluster via the OT-CONTAINER-KIT redis-operator (portable_cluster
+# slice 4, maintained-infra revision). Replaces the earlier bitnami chart
+# deploy: bitnami's free images were archived to the frozen `bitnamilegacy`
+# registry in Aug 2025 — wrong foundation for a blueprint. The operator runs
+# `quay.io/opstree/redis` (the project's companion image, actively rebuilt)
+# with the current Redis 8.10 line.
+redisCluster:
+  name: lab
+  clusterSize: 3        # 3 leaders (masters) + 3 followers (replicas)
+  clusterVersion: v8
+  image: quay.io/opstree/redis
+  tag: v8.10.1
+  imagePullPolicy: IfNotPresent
+  persistenceEnabled: true
+  # Same hand-applied Secret as the previous deploy (password never in git).
+  redisSecret:
+    secretName: redis-cluster-password
+    secretKey: redis-password
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      memory: 512Mi
 
-cluster:
-  nodes: 6
-  replicas: 1
-
-# The cluster-create/update Job is a helm hook by default (post-upgrade) —
-# under ArgoCD that defers it to PostSync, after health; but node readiness
-# requires the cluster to exist. Empty string disables the hook annotation so
-# Argo applies the Job as a regular resource (it polls/waits for the nodes).
-updateJob:
-  helmHook: ""
-
-usePassword: true
-existingSecret: redis-cluster-password
-existingSecretPasswordKey: redis-password
-
-global:
-  storageClass: local-path
-
-persistence:
-  enabled: true
-  size: 2Gi
-
-resources:
-  requests:
-    cpu: 100m
-    memory: 128Mi
-  limits:
-    memory: 512Mi
+storageSpec:
+  volumeClaimTemplate:
+    spec:
+      storageClassName: local-path
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 2Gi
+  nodeConfVolume: true
+  nodeConfVolumeClaimTemplate:
+    spec:
+      storageClassName: local-path
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 1Gi
