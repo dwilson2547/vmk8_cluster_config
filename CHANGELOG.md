@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-10-19 - kafka: Strimzi 1.3.0 operator + 3-node KRaft cluster
+
+### Added
+
+- `argocd/strimzi.yaml` — Strimzi operator pinned to 1.3.0 (chart from the
+  upstream git repo; CRDs ship in the chart's crds/ dir).
+- `argocd/kafka.yaml` + `kafka/cluster.yaml` — `lab` Kafka cluster: KRaft
+  combined mode, 3 replicas (controller+broker each, no ZooKeeper), RF 3 /
+  min.insync.replicas 2, 10Gi local-path PVs per broker, plain internal
+  listener. portable_cluster blueprint slice 2.
+
 ## 2026-10-19 - garage: admin API bearer token (webui auth fix)
 
 ### Fixed
