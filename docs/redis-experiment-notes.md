@@ -1,22 +1,32 @@
 # Redis Cluster experiment notes (portable_cluster slice 4)
 
-**Date:** 2026-10-19, vmk8 cluster, bitnami redis-cluster chart 13.0.4
-(Redis 8.2.1, `bitnamilegacy` image), 6 nodes = 3 masters + 3 replicas on
-2Gi local-path PVs, password via hand-applied Secret.
+**Date:** 2026-10-19, vmk8 cluster. **Revision 2 (same day):** the initial
+bitnami-chart deploy (frozen `bitnamilegacy` image) was replaced with the
+OT-CONTAINER-KIT redis-operator v0.27.0 + `quay.io/opstree/redis:v8.10.1`
+(active project, actively rebuilt image, Redis 8.10 line) — developing on
+archived images is a landmine in a blueprint, even when the security surface
+of a LAN lab is forgiving. Both runs' results and gotchas are kept: the
+failure-mode lessons carry over, the bitnami config is history.
 
-## Results (all verified)
+## Results (operator run — all verified)
 
-- **Cluster formed**: `[OK] All 16384 slots covered`, `cluster_state:ok`,
-  6 known nodes, 3 shards (slot ranges 0-5460, 5461-10922, 10923-16383),
-  one replica per master.
-- **Data spread**: 100 keys SET via cluster client; per-node DBSIZE shows
-  the ~1/3 shard split.
-- **Master-kill test**: deleted pod-0 (master of slots 0-5460); its replica
-  was promoted; all sampled keys readable through the event, `cluster_state`
-  back to `ok` within seconds; the restarted old master rejoined and
-  reclaimed its range (standard failback) with the replica restored.
+- **Deploy**: `RedisCluster/lab` CR via the project's own
+  `charts/redis-cluster` (operator at `charts/redis-operator`, both pinned
+  to v0.27.0); 3 leaders + 3 followers across 4 nodes; per-pod data (2Gi)
+  + node-conf (1Gi) PVCs on local-path; password from the same hand-applied
+  `redis-cluster-password` Secret.
+- **Cluster**: `cluster_state:ok`, 16384 slots across 3 shards (0-5460,
+  5461-10922, 10923-16383), 6 cluster nodes, one replica per master.
+- **Master-kill test**: deleted `lab-leader-0` (master of 0-5460); its
+  follower was **promoted to master of the range**; the restarted old
+  leader rejoined and demoted itself to slave of its former replica; all
+  sampled keys readable, `cluster_state:ok` throughout, zero loss.
+- **Transition hygiene**: swapping the chart source re-rendered the app to a
+  single RedisCluster CR; Argo pruned the old bitnami StatefulSet
+  automatically; only the sts-created PVCs needed a manual delete (they are
+  not Argo-tracked).
 
-## Gotchas hit (for future sessions)
+## Gotchas hit (bitnami run — historical, kept for the lessons)
 
 - **Bitnami free images are archived**: `docker.io/bitnami/redis-cluster:*`
   404s (Aug 2025 cutover). Use `docker.io/bitnamilegacy/<image>:<same tag>`
