@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-10-19 - cockroachdb: experiment verified (range spread, writes under node kill)
+
+### Added
+
+- `docs/cockroachdb-experiment-notes.md` — full run record: table range
+  replicated on {1,2,3}, 20 rows INSERTed during a node kill (raft majority
+  held), 120/120 rows intact after rejoin. Gotcha: the chart's init Job is a
+  helm post-install hook, which deadlocks under ArgoCD (PostSync runs only
+  after healthy, cluster needs the job to become healthy) — manual
+  `cockroach init` breaks the cycle; job then completes without wedging.
+
 ## 2026-10-19 - cockroachdb: CRDB 25.4.4, 3 replicas on local-path
 
 ### Added
