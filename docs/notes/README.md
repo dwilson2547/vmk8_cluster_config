@@ -1,5 +1,6 @@
 # Notes index
 
+- [bitnami charts in 2026: legacy registry, hooks under Argo, redis-cluster bootstrap](bitnami-charts-in-2026-legacy-registry-hooks-under-argo-redi.md) — Bitnami free images were archived Aug 2025: docker.io/bitnami/* 404s; use docker.io/bitnamilegacy/<image>:<sa… `redis,bitnami,argocd`
 - [CockroachDB helm chart init Job deadlocks under ArgoCD](cockroachdb-helm-chart-init-job-deadlocks-under-argocd.md) — The official cockroachdb helm chart's init Job carries helm.sh/hook: post-install; ArgoCD runs it as a PostSy… `cockroachdb,helm,argocd`
 - [Garage slice of portable_cluster deployed and verified](garage-slice-of-portable-cluster-deployed-and-verified.md) — Garage v2.4.1 on vmk8 (ArgoCD app, upstream chart from deuxfleurs-org/garage): 3 replicas on local-path PVCs,… `s3,garage,portable-cluster`
 - [helm lookup secrets are not render-stable under ArgoCD](helm-lookup-secrets-are-not-render-stable-under-argocd.md) — Charts that generate secrets via helm lookup + randHex fallback will silently regenerate the value on any ren… `helm,argocd,gitops,secrets`
